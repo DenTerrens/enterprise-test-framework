@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+@DisplayName("Generated File Verification")
 @Tag("files")
 public class GeneratedFileVerificationTest {
     private static final Path ROOT = Path.of("src", "test", "resources", "data", "files");
