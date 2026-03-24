@@ -1,5 +1,6 @@
 package com.automation.framework.api.client;
 
+import com.automation.framework.config.ConfigManager;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
@@ -20,6 +21,7 @@ public class ApiClient {
                 .addFilter(new AllureRestAssured())
                 .setContentType("application/json");
         headers.forEach(builder::addHeader);
+        applyAuthentication(builder);
         this.specification = builder.build();
     }
 
@@ -31,5 +33,24 @@ public class ApiClient {
     public Response post(String path, Object body) {
         LOGGER.info("Sending POST request to {}", path);
         return RestAssured.given(specification).body(body).post(path);
+    }
+
+    public Response put(String path, Object body) {
+        LOGGER.info("Sending PUT request to {}", path);
+        return RestAssured.given(specification).body(body).put(path);
+    }
+
+    public Response delete(String path) {
+        LOGGER.info("Sending DELETE request to {}", path);
+        return RestAssured.given(specification).delete(path);
+    }
+
+    private void applyAuthentication(RequestSpecBuilder builder) {
+        String authType = ConfigManager.get("api.auth.type").trim().toLowerCase();
+        switch (authType) {
+            case "bearer" -> builder.addHeader("Authorization", "Bearer " + ConfigManager.get("api.auth.token"));
+            case "basic" -> builder.setAuth(RestAssured.basic(ConfigManager.get("api.auth.username"), ConfigManager.get("api.auth.password")));
+            default -> LOGGER.info("API authentication strategy set to none");
+        }
     }
 }

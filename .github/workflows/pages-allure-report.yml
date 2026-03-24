@@ -25,6 +25,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      API_AUTH_TYPE: ${{ secrets.API_AUTH_TYPE }}
+      API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+      API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+      API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,7 +42,12 @@ jobs:
           cache: maven
 
       - name: Run functional suites
-        run: mvn -B clean test -Dheadless=true
+        run: >
+          mvn -B clean test -Dheadless=true
+          -Dapi.auth.type=${API_AUTH_TYPE:-none}
+          -Dapi.auth.token=${API_AUTH_TOKEN:-}
+          -Dapi.auth.username=${API_AUTH_USERNAME:-}
+          -Dapi.auth.password=${API_AUTH_PASSWORD:-}
 
       - name: Generate Allure HTML report
         run: mvn -B allure:report

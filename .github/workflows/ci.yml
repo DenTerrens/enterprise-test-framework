@@ -12,6 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         suite: [api, db, files, integration]
+    env:
+      API_AUTH_TYPE: ${{ secrets.API_AUTH_TYPE }}
+      API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
+      API_AUTH_USERNAME: ${{ secrets.API_AUTH_USERNAME }}
+      API_AUTH_PASSWORD: ${{ secrets.API_AUTH_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,7 +29,12 @@ jobs:
           cache: maven
 
       - name: Run ${{ matrix.suite }} suite
-        run: mvn -B clean test -P${{ matrix.suite }} -Dheadless=true
+        run: >
+          mvn -B clean test -P${{ matrix.suite }} -Dheadless=true
+          -Dapi.auth.type=${API_AUTH_TYPE:-none}
+          -Dapi.auth.token=${API_AUTH_TOKEN:-}
+          -Dapi.auth.username=${API_AUTH_USERNAME:-}
+          -Dapi.auth.password=${API_AUTH_PASSWORD:-}
 
       - name: Upload Allure results
         if: always()
@@ -33,4 +43,3 @@ jobs:
           name: allure-results-${{ matrix.suite }}
           path: allure-results
           if-no-files-found: ignore
-

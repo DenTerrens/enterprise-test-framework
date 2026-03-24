@@ -16,4 +16,16 @@ public class UsersApi {
     public Response createUser(String payload) {
         return client.post("/users", payload);
     }
+
+    public Response updateUser(int userId, String payload) {
+        return client.put("/users/" + userId, payload);
+    }
+
+    public Response deleteUser(int userId) {
+        return client.delete("/users/" + userId);
+    }
+
+    public Response getUnknownResource() {
+        return client.get("/unknown-endpoint");
+    }
 }

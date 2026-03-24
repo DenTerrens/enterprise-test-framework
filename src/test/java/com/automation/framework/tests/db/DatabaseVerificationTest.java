@@ -4,6 +4,8 @@ import com.automation.framework.tests.base.BaseDatabaseTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Database Verification")
 @Tag("db")
+@Execution(ExecutionMode.SAME_THREAD)
 class DatabaseVerificationTest extends BaseDatabaseTest {
     @Test
     @DisplayName("Verify active customer records are available in the seeded database")
@@ -20,5 +23,18 @@ class DatabaseVerificationTest extends BaseDatabaseTest {
 
         assertThat(rows).hasSize(2);
         assertThat(rows).extracting(row -> row.get("email")).contains("standard_user@demo.local", "api_auditor@demo.local");
+    }
+
+    @Test
+    @DisplayName("Verify seeded customer emails remain unique across the dataset")
+    void seededCustomerEmailsRemainUnique() {
+        List<Map<String, Object>> duplicateRows = databaseClient.query("""
+                select email, count(*) as duplicate_count
+                from customer_account
+                group by email
+                having count(*) > 1
+                """);
+
+        assertThat(duplicateRows).isEmpty();
     }
 }
