@@ -8,8 +8,11 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceLock;
+import org.junit.jupiter.api.parallel.Resources;
 
 @ExtendWith(FrameworkTestWatcher.class)
+@ResourceLock(Resources.SYSTEM_PROPERTIES)
 public abstract class BaseUiTest {
   protected Page page;
 

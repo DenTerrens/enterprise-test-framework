@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.automation.framework.tests.base.BaseDemoUiTest;
 import com.automation.framework.ui.pages.LoginPage;
 import com.automation.framework.ui.pages.UsersPage;
+import com.automation.framework.utils.RetrySupport;
+import java.time.Duration;
 import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -42,7 +44,13 @@ class DemoUiBusinessFlowTest extends BaseDemoUiTest {
         createdUser.get("role"),
         createdUser.get("status"));
     assertThat(usersPage.operationMessage()).contains("Created user");
-    assertThat(usersPage.visibleUserNames()).contains(createdUser.get("name"));
+    assertThat(
+            RetrySupport.until(
+                usersPage::visibleUserNames,
+                result -> result.contains(createdUser.get("name")),
+                Duration.ofSeconds(2),
+                Duration.ofMillis(100)))
+        .contains(createdUser.get("name"));
 
     String createdId = usersPage.operationMessage().replaceAll("\\D+", "");
     usersPage.updateUser(
@@ -52,10 +60,22 @@ class DemoUiBusinessFlowTest extends BaseDemoUiTest {
         updatedUser.get("role"),
         updatedUser.get("status"));
     assertThat(usersPage.operationMessage()).contains("Updated user");
-    assertThat(usersPage.visibleUserNames()).contains(updatedUser.get("name"));
+    assertThat(
+            RetrySupport.until(
+                usersPage::visibleUserNames,
+                result -> result.contains(updatedUser.get("name")),
+                Duration.ofSeconds(2),
+                Duration.ofMillis(100)))
+        .contains(updatedUser.get("name"));
 
     usersPage.deleteUser(createdId);
     assertThat(usersPage.operationMessage()).contains("Deleted");
-    assertThat(usersPage.visibleUserNames()).doesNotContain(updatedUser.get("name"));
+    assertThat(
+            RetrySupport.until(
+                usersPage::visibleUserNames,
+                result -> !result.contains(updatedUser.get("name")),
+                Duration.ofSeconds(2),
+                Duration.ofMillis(100)))
+        .doesNotContain(updatedUser.get("name"));
   }
 }
