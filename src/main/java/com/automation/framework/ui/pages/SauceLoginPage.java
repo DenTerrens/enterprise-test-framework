@@ -3,25 +3,25 @@ package com.automation.framework.ui.pages;
 import com.automation.framework.config.ConfigManager;
 import com.microsoft.playwright.Page;
 
-public class LoginPage extends BasePage {
-  public LoginPage(Page page) {
+public class SauceLoginPage extends BasePage {
+  public SauceLoginPage(Page page) {
     super(page);
   }
 
-  public LoginPage open() {
-    page.navigate(ConfigManager.get("ui.baseUrl") + "/login");
+  public SauceLoginPage open() {
+    page.navigate(ConfigManager.get("ui.baseUrl"));
+    waitForVisible("[data-test='login-button']");
     return this;
   }
 
-  public LoginPage loginAs(String username, String password) {
+  public SauceLoginPage loginAs(String username, String password) {
     locator("[data-test='username']").fill(username);
     locator("[data-test='password']").fill(password);
     locator("[data-test='login-button']").click();
-    page.waitForTimeout(250);
     return this;
   }
 
   public String errorMessage() {
-    return locator("[data-test='login-error']").innerText();
+    return locator("[data-test='error']").innerText();
   }
 }

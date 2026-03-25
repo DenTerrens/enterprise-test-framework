@@ -1,102 +1,115 @@
 # Architecture
 
-## Design goals
+## Design intent
 
-This framework is optimized for maintainability, demo value, and extension. The architecture favors clear boundaries over clever abstractions.
+This framework is built to show system thinking, not just test scripting. The architecture separates transport, browser, data, reporting, and test intent so the same codebase can support smoke checks, deeper regression, and cross-layer verification without turning into a pile of brittle helpers.
 
-## Key decisions
+## Why it is structured this way
 
-- Maven was kept as the build backbone because the framework spans Playwright Java, RestAssured, JDBC utilities, JMeter, and Allure.
-- JUnit 5 replaces TestNG because it provides modern tagging, extensions, parallel execution, and clean integration with Maven Surefire.
-- Playwright Java is used only for browser automation. JUnit 5 handles orchestration, lifecycle, fixtures, and tagging.
-- The API layer is intentionally split into a transport client and domain service so auth, headers, and request behavior stay reusable.
-- The database layer uses plain JDBC for transparency and low framework overhead.
-- File verification utilities stay lightweight and readable instead of introducing a large verification DSL.
+- `Maven + JUnit 5` keeps the execution model simple, familiar, and CI-friendly
+- `Playwright Java` handles browser automation only; orchestration stays in JUnit
+- `RestAssured` is wrapped behind service classes so tests do not own HTTP plumbing
+- `JDBC` is used directly for transparency and explainability in interviews
+- `Allure` is kept at the framework boundary so tests remain focused on behavior rather than attachment code
 
 ## Layer breakdown
 
-- `config`: reads base and environment-specific properties and supports runtime overrides with `-D` flags.
-- `ui.playwright`: owns browser lifecycle, context creation, and page exposure.
-- `ui.pages`: page objects that encapsulate selectors and user actions.
-- `api.client`: generic HTTP client setup, auth handling, and shared request configuration.
-- `api.service`: domain-oriented API methods used directly by tests.
-- `db`: query, update, setup, and integrity helpers for backend assertions.
-- `files`: parsers and assertions for text, CSV, TSV, JSON, and XML.
-- `reporting`: Allure attachment utilities used by the JUnit watcher.
-- `tests.base`: reusable setup and teardown for UI, API, and DB tests.
+- `config`
+  Reads application defaults plus environment overrides and allows `-D` property overrides at runtime.
 
-## End-state package structure
+- `ui.playwright`
+  Owns thread-local Playwright lifecycle, browser context setup, headless selection, and video recording.
 
-```text
-src/main/java/com/automation/framework
-|-- api
-|   |-- client
-|   `-- service
-|-- config
-|-- db
-|-- files
-|-- reporting
-|-- ui
-|   |-- pages
-|   `-- playwright
-`-- utils
+- `ui.pages`
+  Encapsulates selectors and browser actions. External smoke coverage and the local integrated demo use separate page objects where the domains differ.
 
-src/test/java/com/automation/framework/tests
-|-- api
-|-- base
-|-- db
-|-- files
-|-- integration
-`-- ui
-```
+- `api.client`
+  Centralizes base URI setup, shared headers, Allure API logging, and auth strategy selection.
 
-## UI design choices
+- `api.service`
+  Exposes business-level API actions such as login, user CRUD, and upload lookup.
 
-- Page objects are used for readability and maintainability.
-- Stable selectors are preferred, especially `data-test` attributes on the sample UI flow.
-- Browser lifecycle is thread-safe through `ThreadLocal` Playwright resources.
-- Failure evidence is captured before teardown so screenshots and DOM snapshots survive failed UI tests.
+- `db`
+  Provides reusable query/update access through a thin JDBC client.
 
-## API design choices
+- `files`
+  Contains file parsing and assertion helpers for text, CSV, TSV, JSON, and XML.
 
-- The API client supports config-driven auth strategies: `none`, `basic`, and `bearer`.
-- CRUD examples demonstrate GET, POST, PUT, and DELETE.
-- Schema files live under `src/test/resources/data/api` so contract checks remain versioned and reviewable.
-- Negative and idempotency scenarios are treated as first-class API checks instead of afterthoughts.
+- `reporting`
+  Provides Allure attachment helpers for text, HTML, screenshots, and file-based evidence.
 
-## Data and environment strategy
+- `demoapp`
+  Hosts a lightweight embedded demo system used for local integrated UI/API/DB verification.
 
-- Base config lives in `src/test/resources/config/application.properties`.
-- Environment overrides live in `src/test/resources/config/environments/<env>.properties`.
-- Runtime overrides are passed with Maven system properties such as `-Denv=qa`, `-Dbrowser=firefox`, or auth overrides for protected APIs.
-- Request payloads, schema files, and file fixtures live under `src/test/resources/data`.
-- DB schema and seed data live under `src/test/resources/db`.
+## Test architecture
 
-## SQL and cross-system strategy
+There are three main styles of tests in this repo:
 
-- H2 keeps the sample project runnable locally while still demonstrating JDBC-based backend verification.
-- Each DB test gets repeatable setup via schema and seed scripts.
-- Integration scenarios persist API-derived data into an audit table to demonstrate cross-system verification.
-- Integrity checks such as uniqueness constraints are shown directly in the DB suite.
+- Smoke tests
+  Fast checks for confidence on push and pull request. These are tagged with `smoke`.
 
-## Parallel execution strategy
+- Regression tests
+  Broader coverage across UI, API, DB, files, and integrated flows. These are tagged with `regression`.
 
-- JUnit 5 parallel execution is enabled through `junit-platform.properties`.
-- UI execution is thread-safe via `ThreadLocal` Playwright resources.
-- API and file tests are naturally parallel-safe.
-- DB tests use isolated in-memory H2 setup per test lifecycle.
+- Failure-demo tests
+  Intentionally failing scenarios used only for reporting demonstrations. These are excluded from default runs.
 
-## CI/CD strategy
+## UI strategy
 
-- Functional suites run through a matrix job for clearer failure isolation.
-- UI smoke runs separately as a visible browser-focused gate.
-- Performance runs on a schedule and on demand, with JMeter artifacts and summary output.
-- Pages publishing is treated as a publishing workflow, not a core quality gate.
-- Secrets should be injected through GitHub Actions repository or environment secrets and mapped to system properties at runtime.
+- Use page objects, not locator sprawl inside tests
+- Prefer stable `data-test` selectors wherever we control the UI
+- Keep browser lifecycle thread-safe through `ThreadLocal`
+- Capture screenshot, DOM, and video evidence on failure
+- Avoid blanket sleeps; use Playwright waits and response-based synchronization
 
-## Tradeoffs and future improvements
+## API strategy
 
-- Public demo systems keep the framework easy to run, but they are less stable than internal test environments.
-- JSONPlaceholder is useful for showcase CRUD flows, but a dedicated mock service would allow richer negative cases.
-- Larger projects may benefit from richer API models and a component-object layer on the UI side.
-- Future expansion should include stronger contract coverage, secret examples in CI, and deeper data lifecycle automation.
+- Separate HTTP transport from business-level services
+- Support `none`, `basic`, and `bearer` authentication through configuration
+- Demonstrate GET, POST, PUT, PATCH, and DELETE
+- Store JSON payloads and schemas under versioned test resources
+- Treat negative cases and idempotency as first-class API coverage
+
+## SQL and data strategy
+
+- Keep the DB layer small and explicit so query intent is easy to review
+- Use schema and seed scripts for deterministic local setup
+- Use polling-based verification only where eventual consistency would be realistic
+- Demonstrate both integrity checks and cross-layer verification
+
+## Cross-layer strategy
+
+The embedded demo app exists so the framework can prove real end-to-end thinking:
+
+- create via UI -> verify via API and DB
+- update via API -> verify via UI and DB
+- upload file via UI -> verify API output and DB audit state
+
+That is more valuable in a portfolio than dozens of disconnected single-layer tests.
+
+## Configuration model
+
+- Base properties: `src/test/resources/config/application.properties`
+- Environment overrides: `src/test/resources/config/environments/<env>.properties`
+- Runtime overrides: Maven `-D` properties
+- Example secret/env names: `.env.example`
+
+## CI/CD model
+
+- `smoke-suite`
+  Fast push/PR gate for `smoke` coverage
+
+- `regression-suite`
+  Broader push/PR gate for `regression` coverage
+
+- `performance`
+  Weekly/manual JMeter execution with artifacts and summary output
+
+- `pages-allure-report`
+  Publishing workflow that generates and deploys the Allure HTML report
+
+## Tradeoffs
+
+- Public demo systems are useful for portability, but they are not as controllable as internal test environments
+- The embedded local demo app increases portfolio value, but it is intentionally lightweight and not a substitute for a real staging environment
+- H2 keeps setup fast and portable, but production database behavior can differ by engine

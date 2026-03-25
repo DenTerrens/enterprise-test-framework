@@ -1,5 +1,6 @@
 target/
 .playwright/
+.env
 
 allure-results/*
 !allure-results/.gitkeep

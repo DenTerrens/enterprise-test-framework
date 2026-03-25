@@ -1,4 +1,4 @@
-name: ci
+name: regression-suite
 
 on:
   push:
@@ -6,12 +6,8 @@ on:
   pull_request:
 
 jobs:
-  functional-tests:
+  regression-tests:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        suite: [api, db, files, integration]
     env:
       API_AUTH_TYPE: ${{ secrets.API_AUTH_TYPE }}
       API_AUTH_TOKEN: ${{ secrets.API_AUTH_TOKEN }}
@@ -28,18 +24,24 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Run ${{ matrix.suite }} suite
+      - name: Verify formatting
+        run: mvn -B spotless:check
+
+      - name: Run regression suite
         run: >
-          mvn -B clean test -P${{ matrix.suite }} -Dheadless=true
+          mvn -B clean test -Dgroups=regression -Dheadless=true
           -Dapi.auth.type=${API_AUTH_TYPE:-none}
           -Dapi.auth.token=${API_AUTH_TOKEN:-}
           -Dapi.auth.username=${API_AUTH_USERNAME:-}
           -Dapi.auth.password=${API_AUTH_PASSWORD:-}
 
-      - name: Upload Allure results
+      - name: Upload regression artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.suite }}
-          path: allure-results
+          name: regression-artifacts
+          path: |
+            allure-results
+            reports/surefire
+            logs
           if-no-files-found: ignore

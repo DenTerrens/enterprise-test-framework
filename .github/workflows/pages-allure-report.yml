@@ -43,7 +43,7 @@ jobs:
 
       - name: Run functional suites
         run: >
-          mvn -B clean test -Dheadless=true
+          mvn -B clean test -Dgroups=regression -Dheadless=true
           -Dapi.auth.type=${API_AUTH_TYPE:-none}
           -Dapi.auth.token=${API_AUTH_TOKEN:-}
           -Dapi.auth.username=${API_AUTH_USERNAME:-}

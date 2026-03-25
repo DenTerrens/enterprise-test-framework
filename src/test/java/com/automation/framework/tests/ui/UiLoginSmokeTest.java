@@ -1,37 +1,35 @@
 package com.automation.framework.tests.ui;
 
-import com.automation.framework.ui.pages.InventoryPage;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.automation.framework.tests.base.BaseDemoUiTest;
 import com.automation.framework.ui.pages.LoginPage;
-import com.automation.framework.tests.base.BaseUiTest;
+import com.automation.framework.ui.pages.UsersPage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("UI Login Smoke Verification")
 @Tag("ui")
 @Tag("smoke")
-class UiLoginSmokeTest extends BaseUiTest {
-    @Test
-    @DisplayName("Verify a standard user can sign in and add an item to the cart")
-    void standardUserCanLoginAndAddItemToCart() {
-        LoginPage loginPage = new LoginPage(page).open();
-        InventoryPage inventoryPage = new InventoryPage(page);
+@Tag("regression")
+class UiLoginSmokeTest extends BaseDemoUiTest {
+  @Test
+  @DisplayName("Verify an admin user can sign in to the integrated demo application")
+  void standardUserCanLoginAndAddItemToCart() {
+    LoginPage loginPage = new LoginPage(page).open();
 
-        loginPage.loginAs("standard_user", "secret_sauce");
-        assertThat(inventoryPage.isLoaded()).isTrue();
+    loginPage.loginAs("admin", "secret123");
+    assertThat(new UsersPage(page).isLoaded()).isTrue();
+  }
 
-        inventoryPage.addBackpackToCart();
-        assertThat(inventoryPage.cartBadgeCount()).isEqualTo("1");
-    }
+  @Test
+  @DisplayName(
+      "Verify invalid credentials show a clear login error in the integrated demo application")
+  void lockedOutUserSeesFriendlyError() {
+    LoginPage loginPage = new LoginPage(page).open();
 
-    @Test
-    @DisplayName("Verify a locked out user sees a friendly error message")
-    void lockedOutUserSeesFriendlyError() {
-        LoginPage loginPage = new LoginPage(page).open();
-
-        loginPage.loginAs("locked_out_user", "secret_sauce");
-        assertThat(loginPage.errorMessage()).contains("Sorry, this user has been locked out");
-    }
+    loginPage.loginAs("admin", "wrong-password");
+    assertThat(loginPage.errorMessage()).contains("Invalid credentials");
+  }
 }

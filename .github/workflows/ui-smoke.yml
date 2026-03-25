@@ -1,12 +1,13 @@
-name: ui-smoke
+name: smoke-suite
 
 on:
   workflow_dispatch:
   push:
     branches: [ main, master ]
+  pull_request:
 
 jobs:
-  playwright-ui:
+  smoke-checks:
     runs-on: ubuntu-latest
     env:
       API_AUTH_TYPE: ${{ secrets.API_AUTH_TYPE }}
@@ -24,18 +25,24 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Execute UI smoke suite
+      - name: Verify formatting
+        run: mvn -B spotless:check
+
+      - name: Execute smoke suite
         run: >
-          mvn -B clean test -Pui -Dgroups=ui -Dheadless=true
+          mvn -B clean test -Dgroups=smoke -Dheadless=true
           -Dapi.auth.type=${API_AUTH_TYPE:-none}
           -Dapi.auth.token=${API_AUTH_TOKEN:-}
           -Dapi.auth.username=${API_AUTH_USERNAME:-}
           -Dapi.auth.password=${API_AUTH_PASSWORD:-}
 
-      - name: Upload Allure results
+      - name: Upload smoke artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-ui
-          path: allure-results
+          name: smoke-artifacts
+          path: |
+            allure-results
+            reports/surefire
+            logs
           if-no-files-found: ignore

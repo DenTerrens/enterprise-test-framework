@@ -2,31 +2,52 @@
 
 ## Playwright browser install issues
 
-The Playwright Java dependency downloads browser binaries on first use. If the initial run fails in a restricted environment, rerun once internet access is available.
+The Playwright Java dependency downloads browser binaries on first use. If the first run fails in a restricted environment, rerun when browser download access is available.
 
-## Public demo site instability
+## Smoke or regression workflow failed on formatting
 
-The sample UI and API flows use public demo systems. If they are temporarily unavailable, switch the environment config to an internal demo target or stub service.
+Run:
+
+```bash
+mvn spotless:apply
+```
+
+Then rerun:
+
+```bash
+mvn spotless:check
+```
 
 ## Allure report is empty
 
-Run tests before generating the report and confirm `allure-results` contains files. The persistent HTML report is generated under `allure-report`.
+Run tests before generating the report and confirm `allure-results` contains files. The persistent HTML report is generated in `allure-report`.
 
-## H2 DB verification failures
+## UI failure has no screenshot or video
 
-The DB suite expects `schema.sql` and `seed.sql` to be available under `src/test/resources/db`. If you rename them, update `BaseDatabaseTest`.
+Run a failing UI test after `mvn clean test`. Evidence is attached only when the failure happens while the Playwright session is active. Failure-demo mode is a good quick check:
+
+```bash
+mvn clean test -Pfailure-demo
+```
+
+## Public demo site instability
+
+Some smoke examples use public demo systems. If those systems are unavailable, prefer the local integrated `demo` group for deterministic execution.
+
+## DB verification failures
+
+The DB suites expect schema and seed scripts under `src/test/resources/db`. If you rename or reorganize those files, update the base database setup classes.
+
+## GitHub Pages deployment blocked
+
+If `pages-allure-report` fails with a Pages environment restriction, open `Settings -> Environments -> github-pages` and make sure your active branch is allowed to deploy.
 
 ## Tag filtering did not work
 
-Use Maven Surefire properties:
+Use Maven Surefire tag properties:
 
 ```bash
-mvn clean test -Dgroups=ui
+mvn clean test -Dgroups=smoke
+mvn clean test -Dgroups=demo
 mvn clean test -DexcludedGroups=integration
 ```
-
-## CI workflow differences
-
-UI and performance workflows are intentionally separate from the main CI job so heavy browser or performance execution does not slow every commit.
-
-

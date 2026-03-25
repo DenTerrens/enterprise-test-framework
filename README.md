@@ -1,146 +1,178 @@
 # Automation Framework Portfolio Project
 
-A flagship Java automation framework built to demonstrate enterprise-grade SDET engineering across UI, API, database, file, and performance testing. The project is designed to be equally useful as a real framework, a recruiter-facing portfolio piece, and a consulting demo asset.
+[![Smoke Suite](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ui-smoke.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ui-smoke.yml)
+[![Regression Suite](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ci.yml)
+[![Performance](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml/badge.svg)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml)
+[![Pages Report](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml)
 
-## Why this framework stands out
+A showcase-quality Java automation framework that demonstrates how a Senior SDET would design UI, API, database, file, reporting, and CI/CD automation as one cohesive system. The repo is built to be explainable in interviews, credible in client demos, and useful as a real starting point for a production test framework.
 
-- Playwright Java UI automation with maintainable page objects, stable selectors, and failure evidence capture
-- RestAssured API layer with reusable client and service abstractions, CRUD coverage, schema checks, negative cases, and idempotency checks
-- JDBC-based database verification with seeded test data, integrity checks, and cross-system API-to-database verification
-- File verification utilities for text, CSV, TSV, JSON, XML, and generated outputs
-- Allure reporting with screenshots, DOM snapshots, API request/response evidence, and failure-demo scenarios
-- GitHub Actions workflows for functional, UI smoke, performance, and Pages publishing
-- Maven + JUnit 5 execution model with tag-based targeting, parallel execution, and environment-driven configuration
+## What this framework covers
+
+- UI automation with Playwright Java, stable selectors, page objects, screenshots, DOM capture, and failure video attachment
+- API automation with RestAssured covering GET, POST, PUT, PATCH, and DELETE flows
+- Auth-ready API design with `none`, `basic`, and `bearer` support
+- SQL verification with reusable JDBC helpers and cross-layer state checks
+- File verification for text, CSV, TSV, JSON, XML, and generated outputs
+- End-to-end integrated tests using a local demo app that supports create, update, delete, and file-upload workflows
+- Allure reporting with human-readable evidence
+- GitHub Actions smoke, regression, performance, and Pages publishing workflows
+- Maven-based build, formatting checks, environment-driven configuration, and reusable test-data factories
+
+## Why this stack
+
+- `Maven`: predictable Java dependency management, strong CI compatibility, and familiar enterprise conventions
+- `JUnit 5`: modern tagging, parallel execution, and extension support without legacy runner overhead
+- `Playwright Java`: strong selector model, built-in stability, and first-class browser artifact capture
+- `RestAssured`: readable API tests with straightforward request/response assertions and schema support
+- `JDBC + SQL`: transparent, low-abstraction database verification that is easy to explain and debug
+- `Allure`: polished local and CI reporting with meaningful attachments
+- `GitHub Actions`: clear workflow visibility for recruiters, hiring managers, and clients reviewing the project
 
 ## Feature matrix
 
 | Capability | Implementation |
 | --- | --- |
 | UI automation | Playwright Java + JUnit 5 |
-| UI abstraction | Page objects with stable `data-test` and semantic selectors |
-| API automation | RestAssured + reusable service layer |
-| API coverage | CRUD, schema verification, negative cases, idempotency |
-| Auth strategy | Config-driven none/basic/bearer support |
-| DB verification | JDBC + H2 demo data + env config |
-| Data integrity | Seeded setup, cleanup, uniqueness checks, audit verification |
+| UI abstraction | Page objects with stable `data-test` selectors |
+| UI evidence | Full-page screenshot, DOM snapshot, failure text, failure video |
+| API automation | RestAssured client + service layer |
+| API coverage | GET, POST, PUT, PATCH, DELETE, schema, negative, idempotency |
+| Database verification | JDBC helpers + H2-backed demo data |
+| Cross-layer tests | UI -> API -> DB and API -> UI -> DB |
 | File verification | Commons CSV + Jackson + XML DOM |
-| Reporting | Allure + screenshots + DOM capture |
-| Performance | JMeter non-GUI sample plan |
-| CI/CD | GitHub Actions |
-| Build tool | Maven |
+| Performance | JMeter smoke plan with scheduled CI execution |
+| Reporting | Allure + Surefire + log file artifacts |
+| Quality gates | Spotless formatting + smoke/regression workflows |
 
-## Recommended architecture
+## Architecture overview
 
 ```mermaid
 flowchart LR
-    A[JUnit 5 tests] --> B[Domain test layers]
-    B --> C[Playwright UI pages]
-    B --> D[RestAssured API services]
-    B --> E[JDBC DB utilities]
-    B --> F[File parsers and assertions]
-    A --> G[Framework watcher]
-    G --> H[Allure attachments]
-    A --> I[Config manager]
-    I --> J[Environment properties]
-    K[GitHub Actions] --> A
-    L[JMeter plans] --> K
+    A["JUnit 5 tests"] --> B["UI pages"]
+    A --> C["API services"]
+    A --> D["Database helpers"]
+    A --> E["File helpers"]
+    A --> F["Framework watcher"]
+    B --> G["Playwright browser manager"]
+    C --> H["Reusable API client"]
+    D --> I["JDBC database client"]
+    F --> J["Allure attachments"]
+    K["GitHub Actions"] --> A
+    L["JMeter plans"] --> K
 ```
 
-## Project structure
+## Real test coverage in this repo
 
-- `src/main/java/com/automation/framework/config`: config-driven execution, environment resolution, and auth strategy support
-- `src/main/java/com/automation/framework/ui`: Playwright session management and page objects
-- `src/main/java/com/automation/framework/api`: reusable API client and services
-- `src/main/java/com/automation/framework/db`: JDBC utilities for backend verification
-- `src/main/java/com/automation/framework/files`: file parsing and assertion helpers
-- `src/main/java/com/automation/framework/reporting`: Allure attachment helpers
-- `src/test/java/com/automation/framework/tests`: UI, API, DB, file, and integration scenarios
-- `src/test/resources/config`: base and environment-specific properties
-- `src/test/resources/data`: request payloads, schema files, and file-verification fixtures
-- `src/test/resources/db`: schema and seed scripts for demo DB verification
-- `performance/jmeter/plans`: sample JMeter performance assets
-- `.github/workflows`: CI workflows for functional, UI smoke, performance, Pages, and artifact publishing
-- `docs`: architecture, contribution guidance, and troubleshooting
+### UI automation
 
-## Senior-ready capabilities
-
-### Modern UI automation
-
-- Playwright Java with page-object layering and stable selectors
-- JUnit 5 parallel execution enabled through `junit-platform.properties`
-- failure screenshots and DOM snapshots attached to Allure
-- config-driven browser and headless settings
-- reusable fixtures and data files under `src/test/resources/data`
+- External smoke coverage against SauceDemo for login success and login failure
+- Local integrated demo app for admin login, CRUD user management, and file upload
+- Stable `data-test` selectors in the local demo UI
+- Reusable page objects in [src/main/java/com/automation/framework/ui/pages](/C:/Projects/automation_framework/src/main/java/com/automation/framework/ui/pages)
 
 ### API automation
 
-- GET, POST, PUT, and DELETE coverage in the sample suite
-- response schema verification with JSON schema files
-- negative-case coverage for unknown resources
-- idempotency coverage for repeated reads
-- config-driven auth support for none, basic, or bearer authentication
+- Public API examples in [UsersApiTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/api/UsersApiTest.java)
+- Integrated local API CRUD coverage in [DemoApiCrudVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoApiCrudVerificationTest.java)
+- Auth flow via [AuthApi.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/api/service/AuthApi.java)
+- File-processing lookup via [UploadsApi.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/api/service/UploadsApi.java)
 
-### SQL and data verification
+### SQL and cross-layer verification
 
-- seeded setup and per-test cleanup through H2-backed scripts
-- uniqueness and integrity checks in the DB suite
-- API-to-database audit verification in integration tests
-- externalized DB connection settings for environment-based execution
+- Reusable DB access in [DatabaseClient.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/db/DatabaseClient.java)
+- Data integrity checks in [DatabaseVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/db/DatabaseVerificationTest.java)
+- Cross-system verification in [DemoCrossLayerVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoCrossLayerVerificationTest.java)
 
-### CI/CD and reporting
+The integrated demo tests prove:
+- create in UI -> verify in API and DB
+- update via API -> verify in UI and DB
+- upload file in UI -> verify processing via API and DB
 
-- separate functional, UI smoke, performance, and Pages workflows
-- artifact publication for Allure results, Surefire results, and JMeter outputs
-- persistent Allure report generation locally and through GitHub Pages
-- environment variable and secret-friendly config overrides via `-D` properties and GitHub Actions settings
+## Project structure
 
-## Prerequisites
+- `src/main/java/com/automation/framework/config`: config and environment resolution
+- `src/main/java/com/automation/framework/ui`: Playwright lifecycle and page objects
+- `src/main/java/com/automation/framework/api`: reusable API client and domain services
+- `src/main/java/com/automation/framework/db`: JDBC helpers
+- `src/main/java/com/automation/framework/files`: file parsers and assertions
+- `src/main/java/com/automation/framework/reporting`: Allure attachment helpers
+- `src/main/java/com/automation/framework/utils`: shared utilities such as polling/retry support
+- `src/test/java/com/automation/framework/demoapp`: embedded local demo system used by integrated tests
+- `src/test/java/com/automation/framework/tests`: smoke, regression, DB, file, integration, and failure-demo tests
+- `src/test/resources/config`: base and environment-specific properties
+- `src/test/resources/data`: payloads, schemas, and file fixtures
+- `src/test/resources/db`: schema and seed scripts
+- `performance/jmeter/plans`: JMeter assets
+
+## Local setup
+
+Prerequisites:
 
 - Java 17+
 - Maven 3.9+
-- Internet access for public demo systems used by Playwright and RestAssured examples
-- Optional: Allure CLI for local HTML report generation
-- Optional: Apache JMeter 5.6+ for local performance execution
+- Playwright browser install support on first run
+- Optional: Allure CLI for local HTML viewing
+- Optional: JMeter for local performance execution
 
-## Quick start
+Optional local env template:
+
+- Copy values from [.env.example](/C:/Projects/automation_framework/.env.example) into your shell, IDE run configuration, or CI secrets
+
+## How to run locally
+
+Run the full regression set:
 
 ```bash
 mvn clean test
 ```
 
-Targeted runs:
+Run only smoke coverage:
 
 ```bash
-mvn clean test -Pui -Dheadless=true
-mvn clean test -Papi
-mvn clean test -Pdb
-mvn clean test -Pfiles
-mvn clean test -Pintegration
 mvn clean test -Dgroups=smoke
-mvn clean test -Denv=qa -Dbrowser=firefox -Dheadless=false
 ```
 
-## Execution flow
-
-1. Maven resolves dependencies and launches JUnit 5.
-2. `ConfigManager` merges default and environment-specific properties.
-3. The requested test layer runs against public demo systems or local fixtures.
-4. Failure evidence is attached to Allure automatically.
-5. GitHub Actions uploads raw Allure result artifacts for functional suites and uploads JMeter artifacts for performance runs.
-
-## Failure demo mode
-
-The framework includes opt-in failing tests for demo and reporting screenshots. They are disabled by default so normal CI stays green.
+Run only API tests:
 
 ```bash
-mvn clean test -Pfailure-demo
-mvn clean test -Pfailure-demo -Dgroups=ui,demo-failure
-mvn clean test -Pfailure-demo -Dgroups=api,demo-failure
+mvn clean test -Papi
+```
+
+Run only DB verification:
+
+```bash
+mvn clean test -Pdb
+```
+
+Run only file verification:
+
+```bash
+mvn clean test -Pfiles
+```
+
+Run only the local integrated demo flows:
+
+```bash
+mvn clean test -Dgroups=demo
+```
+
+Switch environment or browser:
+
+```bash
+mvn clean test -Denv=qa -Dbrowser=firefox -Dheadless=false
 ```
 
 ## Reporting
 
-Allure result files are written to `allure-results`, the persistent HTML report is generated in `allure-report`, Maven test reports are written to `reports/surefire`, and framework logs are written to `logs/automation-framework.log`.
+Test outputs are written to:
+
+- `allure-results`: raw Allure results and attachments
+- `allure-report`: persistent HTML report
+- `reports/surefire`: Surefire XML/TXT outputs
+- `logs/automation-framework.log`: framework log file
+
+Generate the local Allure report:
 
 ```bash
 mvn clean test
@@ -150,36 +182,69 @@ mvn allure:serve
 
 For UI failures, the framework attaches:
 
-- Full-page screenshot
-- Page DOM snapshot
-- Failure reason text
+- full-page screenshot
+- DOM snapshot
+- failure reason text
+- Playwright video when available
 
-## Use cases this framework demonstrates
+Intentional failure demos are opt-in so normal runs stay green:
 
-- E-commerce UI smoke checks with cart verification
-- CRUD-style API verification with reusable service methods
-- API contract verification with schema assertions
-- Database verification after upstream workflow activity
-- File-level verification for generated execution outputs
-- Lightweight API performance smoke coverage via JMeter
-- GitHub Actions performance runs publish a concise JMeter summary in the job log and workflow summary
+```bash
+mvn clean test -Pfailure-demo
+```
 
-## GitHub Pages publishing
+## CI/CD
 
-The repository includes a GitHub Pages workflow that builds the Allure HTML report and publishes it through GitHub Actions.
+The repository includes four GitHub Actions workflows:
 
-Repository settings:
+- `smoke-suite`: runs on push, pull request, and manual dispatch; executes `-Dgroups=smoke`
+- `regression-suite`: runs on push and pull request; executes `-Dgroups=regression`
+- `performance`: runs weekly and manually; executes the JMeter smoke plan and publishes a summary
+- `pages-allure-report`: builds and deploys the Allure HTML report to GitHub Pages when meaningful framework files change
 
-1. Open `Settings -> Pages`.
-2. Set the source to `GitHub Actions`.
-3. Run the `pages-allure-report` workflow manually or push meaningful framework changes to `main` or `master`.
+CI artifacts include:
 
-The workflow:
+- Allure raw results
+- Surefire reports
+- framework logs
+- JMeter `.jtl` and HTML report for performance runs
 
-- runs the functional test suite
-- generates the static Allure HTML report in `allure-report`
-- uploads that folder as the Pages artifact
-- deploys the report to your GitHub Pages site
+Secrets strategy:
+
+- GitHub Actions maps repository secrets to Maven `-D` properties for API auth
+- the same names are documented in [.env.example](/C:/Projects/automation_framework/.env.example)
+
+## GitHub Pages report
+
+Set `Settings -> Pages -> Source` to `GitHub Actions`.
+
+The Pages workflow publishes the generated Allure HTML report to:
+
+- [GitHub Pages report](https://denterrens.github.io/automation_framework_demo/)
+
+## Engineering touches
+
+- Spotless formatting check via `mvn spotless:check`
+- Source formatting via `mvn spotless:apply`
+- `.editorconfig` for consistent editor behavior
+- config-driven execution through `ConfigManager`
+- reusable data factory in [DemoUserDataFactory.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoUserDataFactory.java)
+- reusable API and DB helpers
+- polling-based retry support for eventual-consistency checks in [RetrySupport.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/utils/RetrySupport.java)
+
+## Limitations
+
+- The repo still uses public demo systems for some smoke/API examples, so those tests are less controllable than internal environments
+- The integrated demo app is intentionally lightweight and embedded for portability; a production framework would usually target real deployed systems
+- H2 is excellent for demoability, but production SQL differences would need engine-specific coverage
+- The performance suite is a smoke-level illustration, not a true load model
+
+## Next improvements
+
+- Add OpenAPI-driven contract checks for the local demo API
+- Add Docker-based ephemeral dependencies for stronger environment realism
+- Publish richer report screenshots and architecture visuals under `docs/assets`
+- Expand negative-path coverage for auth and file-processing failures
 
 ## Documentation index
 
@@ -187,9 +252,3 @@ The workflow:
 - [Running Tests](docs/RUNNING_TESTS.md)
 - [Contributing Guide](docs/CONTRIBUTING.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
-
-## Showcase ideas
-
-- Add screenshots from generated Allure reports under `docs/assets/`
-- Publish the Allure HTML report with GitHub Pages
-- Record a short walkthrough showing UI, API, DB, file, and JMeter execution paths

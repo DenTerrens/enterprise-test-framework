@@ -22,6 +22,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <h2.version>2.3.232</h2.version>
         <surefire.version>3.5.2</surefire.version>
+        <spotless.version>2.43.0</spotless.version>
         <groups></groups>
         <excludedGroups>demo-failure</excludedGroups>
         <includeFailureDemos>false</includeFailureDemos>
@@ -151,6 +152,18 @@
                 <configuration>
                     <resultsDirectory>${allure.results.directory}</resultsDirectory>
                     <reportDirectory>${allure.report.directory}</reportDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.24.0</version>
+                        </googleJavaFormat>
+                    </java>
                 </configuration>
             </plugin>
         </plugins>
