@@ -1,184 +1,222 @@
-# Automation Framework Portfolio Project
+# Enterprise Test Framework
 
 [![Smoke Suite](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ui-smoke.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ui-smoke.yml)
 [![Regression Suite](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/ci.yml)
 [![Performance](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml/badge.svg)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml)
 [![Pages Report](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml)
 
-I built this Java automation framework to show how I design UI, API, database, file, reporting, and CI/CD automation as one cohesive system. I use it as a portfolio project, an interview walkthrough repo, and a realistic starting point for a production-grade test framework.
+This is a Java/Maven SDET demo framework that covers UI, API, database, file, and end-to-end integrated verification. It uses Playwright Java for UI, Rest Assured for API, JDBC/H2 for database checks, Allure for reporting, and GitHub Actions for CI. I also included a small local demo system so cross-layer flows can run deterministically instead of depending only on public demo sites.
 
-## What I cover in this framework
-
-- UI automation with Playwright Java, stable selectors, page objects, screenshots, DOM capture, and failure video attachment
-- API automation with RestAssured covering GET, POST, PUT, PATCH, and DELETE flows
-- Auth-ready API design with `none`, `basic`, and `bearer` support
-- SQL verification with reusable JDBC helpers and cross-layer state checks
-- File verification for text, CSV, TSV, JSON, XML, and generated outputs
-- End-to-end integrated tests using a local demo app that supports create, update, delete, and file-upload workflows
-- Allure reporting with human-readable evidence
-- GitHub Actions smoke, regression, performance, and Pages publishing workflows
-- Maven-based build, formatting checks, environment-driven configuration, and reusable test-data factories
-
-## Why I chose this stack
-
-- `Maven`: predictable Java dependency management, strong CI compatibility, and familiar enterprise conventions
-- `JUnit 5`: modern tagging, parallel execution, and extension support without legacy runner overhead
-- `Playwright Java`: strong selector model, built-in stability, and first-class browser artifact capture
-- `RestAssured`: readable API tests with straightforward request/response assertions and schema support
-- `JDBC + SQL`: transparent, low-abstraction database verification that is easy to explain and debug
-- `Allure`: polished local and CI reporting with meaningful attachments
-- `GitHub Actions`: clear workflow visibility for recruiters, hiring managers, and clients reviewing the project
-
-## Feature matrix
-
-| Capability | Implementation |
-| --- | --- |
-| UI automation | Playwright Java + JUnit 5 |
-| UI abstraction | Page objects with stable `data-test` selectors |
-| UI evidence | Full-page screenshot, DOM snapshot, failure text, failure video |
-| API automation | RestAssured client + service layer |
-| API coverage | GET, POST, PUT, PATCH, DELETE, schema, negative, idempotency |
-| Database verification | JDBC helpers + H2-backed demo data |
-| Cross-layer tests | UI -> API -> DB and API -> UI -> DB |
-| File verification | Commons CSV + Jackson + XML DOM |
-| Performance | JMeter smoke plan with scheduled CI execution |
-| Reporting | Allure + Surefire + log file artifacts |
-| Quality gates | Spotless formatting + smoke/regression workflows |
-
-## Architecture overview
-
-```mermaid
-flowchart LR
-    A["JUnit 5 tests"] --> B["UI pages"]
-    A --> C["API services"]
-    A --> D["Database helpers"]
-    A --> E["File helpers"]
-    A --> F["Framework watcher"]
-    B --> G["Playwright browser manager"]
-    C --> H["Reusable API client"]
-    D --> I["JDBC database client"]
-    F --> J["Allure attachments"]
-    K["GitHub Actions"] --> A
-    L["JMeter plans"] --> K
-```
-
-## What this repo demonstrates
-
-### UI automation
-
-- External smoke coverage against SauceDemo for login success and login failure
-- Local integrated demo app for admin login, CRUD user management, and file upload
-- Stable `data-test` selectors in the local demo UI
-- Reusable page objects in [src/main/java/com/automation/framework/ui/pages](/C:/Projects/automation_framework/src/main/java/com/automation/framework/ui/pages)
-
-### API automation
-
-- Public API examples in [UsersApiTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/api/UsersApiTest.java)
-- Integrated local API CRUD coverage in [DemoApiCrudVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoApiCrudVerificationTest.java)
-- Auth flow via [AuthApi.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/api/service/AuthApi.java)
-- File-processing lookup via [UploadsApi.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/api/service/UploadsApi.java)
-
-### SQL and cross-layer verification
-
-- Reusable DB access in [DatabaseClient.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/db/DatabaseClient.java)
-- Data integrity checks in [DatabaseVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/db/DatabaseVerificationTest.java)
-- Cross-system verification in [DemoCrossLayerVerificationTest.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoCrossLayerVerificationTest.java)
-
-The integrated demo tests prove:
-- create in UI -> verify in API and DB
-- update via API -> verify in UI and DB
-- upload file in UI -> verify processing via API and DB
-
-## How I organized the project
-
-- `src/main/java/com/automation/framework/config`: config and environment resolution
-- `src/main/java/com/automation/framework/ui`: Playwright lifecycle and page objects
-- `src/main/java/com/automation/framework/api`: reusable API client and domain services
-- `src/main/java/com/automation/framework/db`: JDBC helpers
-- `src/main/java/com/automation/framework/files`: file parsers and assertions
-- `src/main/java/com/automation/framework/reporting`: Allure attachment helpers
-- `src/main/java/com/automation/framework/utils`: shared utilities such as polling/retry support
-- `src/test/java/com/automation/framework/demoapp`: embedded local demo system used by integrated tests
-- `src/test/java/com/automation/framework/tests`: smoke, regression, DB, file, integration, and failure-demo tests
-- `src/test/resources/config`: base and environment-specific properties
-- `src/test/resources/data`: payloads, schemas, and file fixtures
-- `src/test/resources/db`: schema and seed scripts
-- `performance/jmeter/plans`: JMeter assets
-
-## Local setup
-
-Prerequisites:
-
-- Java 17+
-- Maven 3.9+
-- Playwright browser install support on first run
-- Optional: Allure CLI for local HTML viewing
-- Optional: JMeter for local performance execution
-
-Optional local env template:
-
-- Copy values from [.env.example](/C:/Projects/automation_framework/.env.example) into your shell, IDE run configuration, or CI secrets
-
-## How to run locally
-
-Run the full regression set:
+## Quick Run (2 minutes)
 
 ```bash
+git clone https://github.com/DenTerrens/automation_framework_demo.git
+cd automation_framework_demo
 mvn clean test
 ```
 
-Run only smoke coverage:
+Runs smoke + integration tests locally with embedded demo app.
+
+## Impact
+
+This framework demonstrates how to reduce reliance on manual testing,
+improve release confidence, and provide clear evidence for test results
+across UI, API, and backend layers.
+
+## What this framework covers
+
+- UI automation with Playwright Java, page objects, stable selectors, screenshots, DOM capture, and video on failure
+- API automation with GET, POST, PUT, PATCH, and DELETE coverage
+- Database verification with JDBC and seeded H2 data
+- File verification for text, CSV, TSV, JSON, and XML
+- Cross-layer flows that verify state across UI, API, and DB
+- Smoke vs regression targeting through JUnit 5 tags
+- Allure reporting, logs, Surefire output, and CI artifacts
+- GitHub Actions workflows for smoke, regression, performance, and Pages publishing
+
+## Why this repo exists
+
+I built this repo to show real SDET design decisions, not just isolated test scripts. The goal is to demonstrate:
+
+- multi-layer automation in one framework
+- deterministic integrated verification
+- clean separation of concerns
+- practical CI execution and reporting
+- realistic handling of flakiness and shared-state issues
+
+## Test Layering Approach
+
+UI tests are limited to critical user workflows.
+API and DB checks are used for deeper validation and faster feedback.
+Integration tests combine layers where end-to-end behavior matters.
+This reduces test flakiness and keeps execution time practical.
+
+## Test Stability
+
+Targeted retries and polling are used only where async behavior is expected.
+Shared resources are protected to avoid parallel test conflicts.
+The local demo app ensures deterministic test execution.
+
+## Tech stack
+
+- Java 17
+- Maven
+- JUnit 5
+- Playwright Java
+- Rest Assured
+- JDBC + H2
+- Allure
+- GitHub Actions
+- JMeter
+- Spotless
+
+## Architecture at a glance
+
+```mermaid
+flowchart LR
+    A["UI tests"] --> B["Playwright + Page Objects"]
+    C["API tests"] --> D["ApiClient + Service Layer"]
+    E["DB checks"] --> F["JDBC + H2"]
+    G["File checks"] --> H["Parsers + Assertions"]
+    I["Integration tests"] --> J["Local Demo App"]
+    I --> F
+    K["Config + Data"] --> L["ConfigManager + Resources"]
+    M["Reporting"] --> N["Allure + Logs + Surefire"]
+    O["CI"] --> P["GitHub Actions"]
+    A --> M
+    C --> M
+    E --> M
+    G --> M
+    I --> M
+```
+
+## Test layers
+
+### UI
+
+- [UiLoginSmokeTest.java](src/test/java/com/automation/framework/tests/ui/UiLoginSmokeTest.java)
+  - tags: `ui`, `smoke`, `regression`
+  - target: local demo app
+  - covers login success and login failure
+
+- [DemoUiBusinessFlowTest.java](src/test/java/com/automation/framework/tests/demo/DemoUiBusinessFlowTest.java)
+  - tags: `ui`, `demo`, `regression`
+  - target: local demo app
+  - covers login, create, update, and delete user flows
+
+### API
+
+- [UsersApiTest.java](src/test/java/com/automation/framework/tests/api/UsersApiTest.java)
+  - tags: `api`, `smoke`, `regression`
+  - target: public demo API examples
+  - covers CRUD-style examples, schema checks, negative case, and idempotency
+
+- [DemoApiCrudVerificationTest.java](src/test/java/com/automation/framework/tests/demo/DemoApiCrudVerificationTest.java)
+  - tags: `api`, `demo`, `regression`
+  - target: local deterministic API
+  - covers authenticated CRUD, PATCH, schema, negative case, and repeated GET
+
+### Database
+
+- [DatabaseVerificationTest.java](src/test/java/com/automation/framework/tests/db/DatabaseVerificationTest.java)
+  - tags: `db`, `regression`
+  - target: seeded H2 verification DB
+  - covers seeded data checks and integrity checks
+
+### Files
+
+- [GeneratedFileVerificationTest.java](src/test/java/com/automation/framework/tests/files/GeneratedFileVerificationTest.java)
+  - tags: `files`, `regression`
+  - target: generated-style resource fixtures
+  - covers text, CSV, TSV, JSON, and XML checks
+
+### Integration
+
+- [ApiDatabaseVerificationTest.java](src/test/java/com/automation/framework/tests/integration/ApiDatabaseVerificationTest.java)
+  - tags: `integration`, `regression`
+  - target: public API + local DB audit persistence
+  - covers API-to-DB alignment
+
+- [DemoCrossLayerVerificationTest.java](src/test/java/com/automation/framework/tests/demo/DemoCrossLayerVerificationTest.java)
+  - tags: `integration`, `demo`, `regression`
+  - target: local demo app + local DB
+  - covers:
+    - create in UI -> verify in API and DB
+    - update via API -> verify in UI and DB
+    - upload in UI -> verify API output and DB audit record
+    - invalid UI submission -> verify no DB record is created
+
+### Failure demos
+
+- [FailureDemoUiTest.java](src/test/java/com/automation/framework/tests/ui/FailureDemoUiTest.java)
+- [FailureDemoApiTest.java](src/test/java/com/automation/framework/tests/api/FailureDemoApiTest.java)
+
+These are excluded by default and exist only to show how failed runs look in Allure.
+
+## Local demo system
+
+The local demo system is the main proof point in this repo. It lives in:
+
+- [DemoAppServer.java](src/test/java/com/automation/framework/demoapp/DemoAppServer.java)
+- [DemoAppSupport.java](src/test/java/com/automation/framework/demoapp/DemoAppSupport.java)
+
+It provides:
+
+- login flow
+- user CRUD flow
+- file upload processing flow
+- API endpoints for users and uploads
+- DB-backed state that can be verified after UI and API actions
+
+I use public demo API tests to show portability, but I use the embedded app as the primary proof for deterministic integrated verification.
+
+## What this proves
+
+This repo demonstrates:
+
+- UI, API, database, and file validation in one framework
+- cross-layer verification instead of isolated test scripts
+- config-driven execution and suite targeting
+- CI execution with smoke and regression separation
+- centralized evidence capture for failures
+- practical handling of flakiness and shared-state issues
+
+## How to run smoke
 
 ```bash
 mvn clean test -Dgroups=smoke
 ```
 
-Run only API tests:
+## How to run regression
 
 ```bash
+mvn clean test
+```
+
+## How to run only UI / API / DB / files / integration
+
+```bash
+mvn clean test -Pui
 mvn clean test -Papi
-```
-
-Run only DB verification:
-
-```bash
 mvn clean test -Pdb
-```
-
-Run only file verification:
-
-```bash
 mvn clean test -Pfiles
+mvn clean test -Pintegration
 ```
 
-Run only the local integrated demo flows:
+You can also run the local integrated demo flows directly:
 
 ```bash
 mvn clean test -Dgroups=demo
 ```
 
-Switch environment or browser:
+## How reporting works
 
-```bash
-mvn clean test -Denv=qa -Dbrowser=firefox -Dheadless=false
-```
+The framework writes:
 
-## Reporting
-
-I write test outputs to:
-
-- `allure-results`: raw Allure results and attachments
-- `allure-report`: persistent HTML report
-- `reports/surefire`: Surefire XML/TXT outputs
-- `logs/automation-framework.log`: framework log file
-
-Generate the local Allure report:
-
-```bash
-mvn clean test
-mvn allure:report
-mvn allure:serve
-```
+- raw Allure results to `allure-results`
+- persistent Allure HTML to `allure-report`
+- Surefire outputs to `reports/surefire`
+- framework logs to `logs/automation-framework.log`
 
 For UI failures, I attach:
 
@@ -187,66 +225,97 @@ For UI failures, I attach:
 - failure reason text
 - Playwright video when available
 
-The intentional failure demos are opt-in so normal runs stay green:
+Generate the local report with:
 
 ```bash
-mvn clean test -Pfailure-demo
+mvn clean test
+mvn allure:report
+mvn allure:serve
 ```
 
-## CI/CD
+## How CI works
 
-I use four GitHub Actions workflows:
+I use four workflows:
 
-- `smoke-suite`: runs on push, pull request, and manual dispatch; executes `-Dgroups=smoke`
-- `regression-suite`: runs on push and pull request; executes `-Dgroups=regression`
-- `performance`: runs weekly and manually; executes the JMeter smoke plan and publishes a summary
-- `pages-allure-report`: builds and deploys the Allure HTML report to GitHub Pages when meaningful framework files change
+- `smoke-suite`
+  - push, pull request, manual
+  - runs `-Dgroups=smoke`
 
-CI artifacts include:
+- `regression-suite`
+  - push and pull request
+  - runs `-Dgroups=regression`
 
-- Allure raw results
+- `performance`
+  - weekly and manual
+  - runs the JMeter smoke plan and publishes artifacts plus a summary
+
+- `pages-allure-report`
+  - manual and meaningful framework changes
+  - generates and publishes the Allure HTML report to GitHub Pages
+
+CI uploads:
+
+- Allure results
 - Surefire reports
 - framework logs
-- JMeter `.jtl` and HTML report for performance runs
+- JMeter report artifacts
 
-Secrets strategy:
+## Why I made these design choices
 
-- GitHub Actions maps repository secrets to Maven `-D` properties for API auth
-- the same names are documented in [.env.example](/C:/Projects/automation_framework/.env.example)
+- JUnit 5 for tags, extensions, and parallel execution
+- Playwright Java for browser automation with modern stability and evidence capture
+- Rest Assured behind service abstractions to keep tests readable
+- JDBC/H2 to keep database verification explicit and portable
+- Embedded local demo app to support deterministic integrated testing
+- Targeted retry/polling only where async behavior is realistic
+- Resource locking for shared JVM state when tests run in parallel
 
-## GitHub Pages report
+## How to review this repo quickly
 
-Set `Settings -> Pages -> Source` to `GitHub Actions`.
+If you only review five things, start here:
 
-The Pages workflow publishes the generated Allure HTML report to:
+1. [DemoCrossLayerVerificationTest.java](src/test/java/com/automation/framework/tests/demo/DemoCrossLayerVerificationTest.java)
+2. [DemoAppServer.java](src/test/java/com/automation/framework/demoapp/DemoAppServer.java)
+3. [ApiClient.java](src/main/java/com/automation/framework/api/client/ApiClient.java) and [UsersApi.java](src/main/java/com/automation/framework/api/service/UsersApi.java)
+4. [PlaywrightManager.java](src/main/java/com/automation/framework/ui/playwright/PlaywrightManager.java)
+5. [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
-- [GitHub Pages report](https://denterrens.github.io/automation_framework_demo/)
+## Example outputs
 
-## Engineering touches
+### Allure overview
 
-- Spotless formatting check via `mvn spotless:check`
-- Source formatting via `mvn spotless:apply`
-- `.editorconfig` for consistent editor behavior
-- config-driven execution through `ConfigManager`
-- reusable data factory in [DemoUserDataFactory.java](/C:/Projects/automation_framework/src/test/java/com/automation/framework/tests/demo/DemoUserDataFactory.java)
-- reusable API and DB helpers
-- polling-based retry support for eventual-consistency checks in [RetrySupport.java](/C:/Projects/automation_framework/src/main/java/com/automation/framework/utils/RetrySupport.java)
+![Allure overview](docs/images/allure-overview.png)
 
-## Limitations
+### Failed UI evidence
 
-- I still use public demo systems for some smoke/API examples, so those tests are less controllable than internal environments
-- I keep the integrated demo app lightweight and embedded for portability; in a production setup I would usually target real deployed systems
-- H2 is excellent for demoability, but production SQL differences would need engine-specific coverage
-- The performance suite is a smoke-level illustration, not a true load model
+![Failed UI evidence](docs/images/failed-ui-evidence.png)
 
-## Next improvements
+### GitHub Actions run
 
-- Add OpenAPI-driven contract checks for the local demo API
-- Add Docker-based ephemeral dependencies for stronger environment realism
-- Publish richer report screenshots and architecture visuals under `docs/assets`
-- Expand negative-path coverage for auth and file-processing failures
+![GitHub Actions run](docs/images/github-actions-run.png)
 
-## Documentation index
+### JMeter summary
+
+![JMeter summary](docs/images/jmeter-summary.png)
+
+## Known tradeoffs
+
+- H2 is used for portability and fast demo setup, not to replicate production-specific DB behavior
+- Some API tests use public demo services for simple examples
+- The embedded app is intentionally small and deterministic rather than a full enterprise environment
+
+## Project structure
+
+- `src/main/java/com/automation/framework/ui` - Playwright and page objects
+- `src/main/java/com/automation/framework/api` - API client and service layers
+- `src/main/java/com/automation/framework/db` - DB access helpers
+- `src/main/java/com/automation/framework/files` - file parsing and assertions
+- `src/test/java/com/automation/framework/tests` - suites and base classes
+- `src/test/java/com/automation/framework/demoapp` - deterministic embedded demo app
+- `.github/workflows` - CI/CD pipelines
+- `performance/jmeter` - JMeter sample plan and outputs
+
+## Additional docs
 
 - [Architecture](docs/ARCHITECTURE.md)
 - [Running Tests](docs/RUNNING_TESTS.md)

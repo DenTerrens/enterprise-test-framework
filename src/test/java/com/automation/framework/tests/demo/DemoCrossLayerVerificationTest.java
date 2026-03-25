@@ -131,4 +131,19 @@ class DemoCrossLayerVerificationTest extends BaseDemoUiTest {
               assertThat(row.get("row_count")).isEqualTo(2);
             });
   }
+
+  @Test
+  @DisplayName("Reject an invalid UI submission and verify no database record is created")
+  void invalidUiSubmissionDoesNotCreateDatabaseRecord() {
+    String invalidName = "Invalid Ui User";
+
+    new LoginPage(page).open().loginAs("admin", "secret123");
+    UsersPage usersPage = new UsersPage(page);
+    usersPage.createUser(invalidName, "", "ANALYST", "ACTIVE");
+
+    assertThat(usersPage.operationMessage()).contains("Name and email are required");
+    List<Map<String, Object>> rows =
+        databaseClient.query("select user_id from managed_user where name = ?", invalidName);
+    assertThat(rows).isEmpty();
+  }
 }

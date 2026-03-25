@@ -113,6 +113,11 @@ public class DemoAppServer {
       }
       if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
         Map<String, String> payload = readJson(exchange, new TypeReference<>() {});
+        String validationMessage = validateUserPayload(payload);
+        if (validationMessage != null) {
+          writeJson(exchange, 400, Map.of("message", validationMessage));
+          return;
+        }
         long userId = insertUser(connection, payload);
         writeJson(exchange, 201, getUser(connection, userId));
         return;
@@ -261,6 +266,15 @@ public class DemoAppServer {
         return keys.getLong(1);
       }
     }
+  }
+
+  private String validateUserPayload(Map<String, String> payload) {
+    String name = payload.getOrDefault("name", "").trim();
+    String email = payload.getOrDefault("email", "").trim();
+    if (name.isEmpty() || email.isEmpty()) {
+      return "Name and email are required";
+    }
+    return null;
   }
 
   private void updateUser(Connection connection, long userId, Map<String, String> payload)
