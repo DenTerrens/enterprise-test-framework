@@ -41,6 +41,12 @@ jobs:
           java-version: '17'
           cache: maven
 
+      - name: Build project
+        run: mvn -B -DskipTests install --no-transfer-progress
+
+      - name: Install Playwright browsers and OS dependencies
+        run: mvn -B exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps"
+
       - name: Run functional suites
         run: >
           mvn -B clean test -Dgroups=regression -Dheadless=true
