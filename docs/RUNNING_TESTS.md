@@ -14,7 +14,7 @@ This runs the default regression coverage and excludes the intentional failure-d
 mvn clean test -Dgroups=smoke
 ```
 
-Use this when you want a fast signal for core UI and API behavior.
+I use this for a fast signal on core UI and API behavior.
 
 ## By layer
 
@@ -32,7 +32,7 @@ mvn clean test -Pintegration
 mvn clean test -Dgroups=demo
 ```
 
-This runs the embedded demo app scenarios that prove:
+This runs the embedded demo app scenarios that I use to prove:
 
 - UI create -> API + DB verification
 - API update -> UI + DB verification
@@ -47,7 +47,7 @@ mvn clean test -Denv=qa
 
 ## API auth overrides
 
-The framework supports `none`, `basic`, and `bearer` auth strategies through Maven properties or CI secrets.
+I support `none`, `basic`, and `bearer` auth strategies through Maven properties or CI secrets.
 
 ```bash
 mvn clean test -Papi -Dapi.auth.type=bearer -Dapi.auth.token=my-token

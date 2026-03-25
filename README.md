@@ -5,9 +5,9 @@
 [![Performance](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml/badge.svg)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml)
 [![Pages Report](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml)
 
-A showcase-quality Java automation framework that demonstrates how a Senior SDET would design UI, API, database, file, reporting, and CI/CD automation as one cohesive system. The repo is built to be explainable in interviews, credible in client demos, and useful as a real starting point for a production test framework.
+I built this Java automation framework to show how I design UI, API, database, file, reporting, and CI/CD automation as one cohesive system. I use it as a portfolio project, an interview walkthrough repo, and a realistic starting point for a production-grade test framework.
 
-## What this framework covers
+## What I cover in this framework
 
 - UI automation with Playwright Java, stable selectors, page objects, screenshots, DOM capture, and failure video attachment
 - API automation with RestAssured covering GET, POST, PUT, PATCH, and DELETE flows
@@ -19,7 +19,7 @@ A showcase-quality Java automation framework that demonstrates how a Senior SDET
 - GitHub Actions smoke, regression, performance, and Pages publishing workflows
 - Maven-based build, formatting checks, environment-driven configuration, and reusable test-data factories
 
-## Why this stack
+## Why I chose this stack
 
 - `Maven`: predictable Java dependency management, strong CI compatibility, and familiar enterprise conventions
 - `JUnit 5`: modern tagging, parallel execution, and extension support without legacy runner overhead
@@ -62,7 +62,7 @@ flowchart LR
     L["JMeter plans"] --> K
 ```
 
-## Real test coverage in this repo
+## What this repo demonstrates
 
 ### UI automation
 
@@ -89,7 +89,7 @@ The integrated demo tests prove:
 - update via API -> verify in UI and DB
 - upload file in UI -> verify processing via API and DB
 
-## Project structure
+## How I organized the project
 
 - `src/main/java/com/automation/framework/config`: config and environment resolution
 - `src/main/java/com/automation/framework/ui`: Playwright lifecycle and page objects
@@ -165,7 +165,7 @@ mvn clean test -Denv=qa -Dbrowser=firefox -Dheadless=false
 
 ## Reporting
 
-Test outputs are written to:
+I write test outputs to:
 
 - `allure-results`: raw Allure results and attachments
 - `allure-report`: persistent HTML report
@@ -180,14 +180,14 @@ mvn allure:report
 mvn allure:serve
 ```
 
-For UI failures, the framework attaches:
+For UI failures, I attach:
 
 - full-page screenshot
 - DOM snapshot
 - failure reason text
 - Playwright video when available
 
-Intentional failure demos are opt-in so normal runs stay green:
+The intentional failure demos are opt-in so normal runs stay green:
 
 ```bash
 mvn clean test -Pfailure-demo
@@ -195,7 +195,7 @@ mvn clean test -Pfailure-demo
 
 ## CI/CD
 
-The repository includes four GitHub Actions workflows:
+I use four GitHub Actions workflows:
 
 - `smoke-suite`: runs on push, pull request, and manual dispatch; executes `-Dgroups=smoke`
 - `regression-suite`: runs on push and pull request; executes `-Dgroups=regression`
@@ -234,8 +234,8 @@ The Pages workflow publishes the generated Allure HTML report to:
 
 ## Limitations
 
-- The repo still uses public demo systems for some smoke/API examples, so those tests are less controllable than internal environments
-- The integrated demo app is intentionally lightweight and embedded for portability; a production framework would usually target real deployed systems
+- I still use public demo systems for some smoke/API examples, so those tests are less controllable than internal environments
+- I keep the integrated demo app lightweight and embedded for portability; in a production setup I would usually target real deployed systems
 - H2 is excellent for demoability, but production SQL differences would need engine-specific coverage
 - The performance suite is a smoke-level illustration, not a true load model
 

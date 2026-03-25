@@ -2,10 +2,10 @@
 
 ## Principles
 
-- Prefer readable, explicit abstractions over clever framework code.
-- Keep selectors, endpoints, SQL, and file logic isolated from test intent.
-- Avoid hardcoded environment values in tests.
-- Keep sample tests realistic enough to demonstrate business value.
+- I prefer readable, explicit abstractions over clever framework code.
+- I keep selectors, endpoints, SQL, and file logic isolated from test intent.
+- I avoid hardcoded environment values in tests.
+- I keep sample tests realistic enough to demonstrate business value.
 
 ## Conventions
 

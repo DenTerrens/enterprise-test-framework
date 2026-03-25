@@ -2,15 +2,15 @@
 
 ## Design intent
 
-This framework is built to show system thinking, not just test scripting. The architecture separates transport, browser, data, reporting, and test intent so the same codebase can support smoke checks, deeper regression, and cross-layer verification without turning into a pile of brittle helpers.
+I built this framework to show system thinking, not just test scripting. I separate transport, browser, data, reporting, and test intent so the same codebase can support smoke checks, deeper regression, and cross-layer verification without turning into a pile of brittle helpers.
 
-## Why it is structured this way
+## Why I structured it this way
 
 - `Maven + JUnit 5` keeps the execution model simple, familiar, and CI-friendly
-- `Playwright Java` handles browser automation only; orchestration stays in JUnit
+- `Playwright Java` handles browser automation only; I keep orchestration in JUnit
 - `RestAssured` is wrapped behind service classes so tests do not own HTTP plumbing
 - `JDBC` is used directly for transparency and explainability in interviews
-- `Allure` is kept at the framework boundary so tests remain focused on behavior rather than attachment code
+- `Allure` stays at the framework boundary so tests remain focused on behavior rather than attachment code
 
 ## Layer breakdown
 
@@ -43,7 +43,7 @@ This framework is built to show system thinking, not just test scripting. The ar
 
 ## Test architecture
 
-There are three main styles of tests in this repo:
+I use three main styles of tests in this repo:
 
 - Smoke tests
   Fast checks for confidence on push and pull request. These are tagged with `smoke`.
@@ -79,7 +79,7 @@ There are three main styles of tests in this repo:
 
 ## Cross-layer strategy
 
-The embedded demo app exists so the framework can prove real end-to-end thinking:
+I use the embedded demo app to prove real end-to-end thinking:
 
 - create via UI -> verify via API and DB
 - update via API -> verify via UI and DB
@@ -111,5 +111,5 @@ That is more valuable in a portfolio than dozens of disconnected single-layer te
 ## Tradeoffs
 
 - Public demo systems are useful for portability, but they are not as controllable as internal test environments
-- The embedded local demo app increases portfolio value, but it is intentionally lightweight and not a substitute for a real staging environment
+- The embedded local demo app increases portfolio value, but I keep it intentionally lightweight and it is not a substitute for a real staging environment
 - H2 keeps setup fast and portable, but production database behavior can differ by engine
