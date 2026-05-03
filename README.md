@@ -5,6 +5,8 @@
 [![Performance](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml/badge.svg)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/performance.yml)
 [![Pages Report](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml/badge.svg?branch=master)](https://github.com/DenTerrens/automation_framework_demo/actions/workflows/pages-allure-report.yml)
 
+Built by [TestVector](https://testvector.dev).
+
 This is a Java/Maven SDET demo framework that covers UI, API, database, file, and end-to-end integrated verification. It uses Playwright Java for UI, Rest Assured for API, JDBC/H2 for database checks, Allure for reporting, and GitHub Actions for CI. I also included a small local demo system so cross-layer flows can run deterministically instead of depending only on public demo sites.
 
 ## Quick Run (2 minutes)
@@ -16,6 +18,10 @@ mvn clean test
 ```
 
 Runs smoke + integration tests locally with embedded demo app.
+
+## Need this for your team?
+
+See [Services](https://testvector.dev/services).
 
 ## Impact
 
